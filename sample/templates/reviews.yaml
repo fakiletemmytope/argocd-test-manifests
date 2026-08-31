@@ -1,0 +1,58 @@
+{{- range $version := .Values.reviews.deployment.versions }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-{{ $.Values.reviews.deployment.name }}-{{ $version }}
+  labels:
+    {{- range $key, $value:= $.Values.reviews.deployment.labels }}
+    {{ $key }}: {{ $value }}
+    version: {{ $version }}
+    {{- end }}
+spec:
+  replicas: {{ $.Values.reviews.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- range $key, $value:= $.Values.reviews.deployment.labels }}
+      {{ $key }}: {{ $value }}
+      version: {{ $version }}
+      {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- range $key, $value:= $.Values.reviews.deployment.labels }}
+        {{ $key }}: {{ $value }}
+        version: {{ $version }}
+        {{- end }}
+    spec:
+      serviceAccountName: bookinfo-reviews
+      containers:
+        {{- range $.Values.reviews.deployment.containers }}
+        - name: {{ .name }}
+          image: {{ .image_repo }}-{{ $version }}:{{ .tag }}
+          imagePullPolicy: {{ .imagePullPolicy }}
+          env:
+            - name: LOG_DIR
+              value: "/tmp/logs"
+          ports:
+            {{- range .ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+              protocol: {{ .protocol }}
+            {{- end }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: wlp-output
+              mountPath: /opt/ibm/wlp/output
+          securityContext:
+            runAsUser: 1000
+          {{- end }}
+
+      volumes:
+        - name: wlp-output
+          emptyDir: {}
+
+        - name: tmp
+          emptyDir: {}
+---
+{{- end }}

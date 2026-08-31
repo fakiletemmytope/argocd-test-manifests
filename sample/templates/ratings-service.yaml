@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.ratings.service.name }}
+  labels:
+    {{- range $key, $value:= .Values.ratings.service.labels }}
+    {{ $key }}: {{ $value }}
+    {{- end }}    
+spec:
+  ports:
+  {{- range .Values.ratings.service.ports }}
+  - name: {{ .name }}
+    port: {{ .port }}
+  {{- end }}
+  selector:
+    {{- range $key, $value:= .Values.ratings.service.selector }}
+    {{ $key }}: {{ $value }}
+    {{- end }}

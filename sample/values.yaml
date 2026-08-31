@@ -1,0 +1,141 @@
+productPage:
+  deployment:
+    name: productpage-v1
+    labels:
+      #map
+      app: productpage
+      version: v1
+    replicas: 1
+    matchLabels:
+      #map
+      app: productpage
+      version: v1
+    containers:
+    - name: productpage
+      image_repo: docker.io/istio/examples-bookinfo-productpage-v1
+      tag: 1.16.2
+      imagePullPolicy: IfNotPresent
+      ports:
+      - name: http
+        port: 9080
+        protocol: TCP
+  service:
+    name: productpage
+    labels:
+      app: productpage
+      service: productpage
+    ports:
+    - port: 9080
+      name: http
+    selector:
+      app: productpage
+
+  serviceAccount:
+  configMap:
+    data:
+    name:
+  secret:
+ratings:
+  deployment:
+    name: ratings-v1
+    replicas: 1
+    labels:
+      app: ratings
+      version: v1
+    matchLabels:
+      app: ratings
+      version: v1
+    containers:
+    - name: ratings
+      image_repo: docker.io/istio/examples-bookinfo-ratings-v1
+      imagePullPolicy: IfNotPresent
+      tag: 1.16.2
+      ports:
+      - name: http
+        port: 9080
+        protocol: TCP
+  service:
+    name: ratings
+    selector:
+      app: ratings
+    labels:
+      app: ratings
+      service: ratings
+    ports:
+    - name: http
+      port: 9080
+  serviceAccount:
+  configMap:
+  secret:
+reviews:
+  deployment:
+    versions:
+    - v1
+    - v2
+    - v3
+    name: reviews
+    replicas: 1
+    labels:
+      app: reviews
+    matchLabels:
+      app: reviews
+    containers:
+    - name: reviews
+      image_repo: docker.io/istio/examples-bookinfo-reviews
+      tag: 1.20.3
+      imagePullPolicy: IfNotPresent
+      ports:
+      - name: http
+        port: 9080
+        protocol: TCP
+  service:
+    name: reviews
+    labels:
+      app: reviews
+      service: reviews
+    selector:
+      app: reviews
+    ports:
+    - name: http
+      protocol: TCP
+      port: 9080
+  serviceAccount:
+  configMap:
+  secret:
+details:
+  deployment:
+    name: details
+    labels:
+      #map
+      app: details
+      version: v1
+    replicas: 1
+    matchLabels:
+      #map
+      app: details
+      version: v1
+    containers:
+    - name: details
+      image_repo: docker.io/istio/examples-bookinfo-details-v1
+      tag: 1.16.2
+      imagePullPolicy: IfNotPresent
+      ports:
+      - name: http
+        port: 9080
+        protocol: TCP
+  service:
+    name: details
+    labels:
+      app: details
+      service: details
+    ports:
+    - port: 9080
+      name: http
+    selector:
+      app: details
+
+  serviceAccount:
+  configMap:
+    data:
+    name:
+  secret:

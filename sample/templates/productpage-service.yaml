@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.productPage.service.name }}
+  labels:
+    {{- range $key, $value := .Values.productPage.service.labels }}
+    {{ $key }}: {{ $value }}
+    {{- end }}
+spec:
+  ports:
+  {{- range .Values.productPage.service.ports }}
+  - name: {{ .name }}
+    port: {{ .port }}
+  {{- end }}
+  selector:
+    {{- range $key, $value := .Values.productPage.service.selector }}
+    {{ $key }}: {{ $value }}
+    {{- end }}

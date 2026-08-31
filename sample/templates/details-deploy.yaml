@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.details.deployment.name }}
+  labels:
+    {{- range $key, $value:= .Values.details.deployment.labels }}
+    {{ $key }}: {{ $value }}
+    {{- end }}    
+spec:
+  replicas: {{ .Values.details.deployment.replicas }} 
+  selector:
+    matchLabels:
+      {{- range $key, $value:= .Values.details.deployment.labels }}
+      {{ $key }}: {{ $value }}
+      {{- end }}
+  template:
+    metadata:
+      labels:
+        app: details
+        version: v1
+    spec:
+      serviceAccountName: bookinfo-details
+      containers:
+      {{- range .Values.details.deployment.containers }}
+      - name: {{ .name }}
+        image: {{ .image_repo }}:{{ .tag }}
+        imagePullPolicy: {{ .imagePullPolicy }}
+        ports:
+        {{- range .ports }}
+        - name: {{ .name }}
+          containerPort: {{ .port }}
+          protocol: {{ .protocol }}
+        {{- end }}
+        securityContext:
+          runAsUser: 1000
+      {{- end }}

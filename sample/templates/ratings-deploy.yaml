@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name  }}-{{ .Values.ratings.deployment.name }}
+  labels:
+    {{- range $key, $value:= .Values.ratings.deployment.labels }}
+    {{ $key }}: {{ $value }}
+    {{- end }}    
+spec:
+  replicas: {{ .Values.ratings.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- range $key, $value:= .Values.ratings.deployment.matchLabels }}
+      {{ $key }}: {{ $value }}
+      {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- range $key, $value:= .Values.ratings.deployment.labels }}
+        {{ $key }}: {{ $value }}
+        {{- end }}
+    spec:
+      serviceAccountName: bookinfo-ratings
+      containers:
+      {{- range .Values.ratings.deployment.containers }}
+      - name: {{ .name }}
+        image: {{ .image_repo }}:{{ .tag }}
+        imagePullPolicy: {{ .imagePullPolicy }}
+        ports:
+        {{- range .ports }}
+        - name: {{ .name }}
+          containerPort: {{ .port }}
+          protocol: {{ .protocol }}
+        {{- end }}
+        securityContext:
+          runAsUser: 1000
+      {{- end }}

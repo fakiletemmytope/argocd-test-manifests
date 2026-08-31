@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.productPage.deployment.name }}
+  labels:
+    {{- range $key, $value := .Values.productPage.deployment.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.productPage.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- range $key, $value := .Values.productPage.deployment.matchLabels }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+  template: #pod template
+    metadata:
+      labels:
+        {{- range $key, $value := .Values.productPage.deployment.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+    spec:
+      serviceAccountName: bookinfo-productpage
+      containers:
+        {{- range .Values.productPage.deployment.containers }}
+        - name: {{ .name }}
+          image: {{ .image_repo }}:{{ .tag }}
+          imagePullPolicy: {{ .imagePullPolicy }}
+          ports:
+            {{- range .ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+              protocol: {{ .protocol }}
+            {{- end }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          securityContext:
+            runAsUser: 1000
+        {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir: {}

@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: geocentric-model-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/fakiletemmytope/argocd-test-manifests.git
+    targetRevision: HEAD
+    path: ./declarative-argocd/monoapp/geometric-app
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: geocentric-model
+
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true  
+    automated:
+      prune: true
+      selfHeal: true

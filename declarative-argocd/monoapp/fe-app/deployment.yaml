@@ -1,17 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: geocentric-model
+  name: fe-app
 spec:
   selector:
     matchLabels:
-      app: geocentric-model
+      app: fe-app
   replicas: 1
   template:
     metadata:
       labels:
-        app: geocentric-model
+        app: fe-app
     spec:
       containers:
       - name: geocentric-model
-        image: docker.io/siddharth67/geocentric-solar-system:v1
+        image: docker.io/temmytope/kc-capstone-fe:latest
+        ports:
+        - containerPort: 80

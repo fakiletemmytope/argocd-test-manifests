@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Service
+metadata:
+  labels:
+    app: app1-svc
+spec:
+  type: NodePort
+  selector:
+    labels:
+      app: app1
+  ports:
+  - name: fe-port
+    port: 8090 # service port
+    protocol: TCP
+    targetPort: 8090 #container port
+    nodePort: 32001

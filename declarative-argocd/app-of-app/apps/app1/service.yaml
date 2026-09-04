@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+apiVersion: v1
 kind: Service
 metadata:
   labels:
@@ -6,8 +6,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    labels:
-      app: app1
+    app: app1
   ports:
   - name: fe-port
     port: 8090 # service port
